@@ -1,0 +1,18 @@
+
+Storage Spaces
+==============
+
+	Server Manager-> File and Storage Services-> Storage Pools
+		Physical Disks-> Tasks-> New Storage Pool
+		Virtual Disks-> Tasks-> New Virtual Disk
+			(Create a volume when wizard closes)
+
+	Deduplikacija
+	-------------
+	Server Manager-> Manage-> Add Roles and Features
+		File and Storage Services-> File and iSCSI Services-> Data Deduplication
+	Restart Server
+	Post restart-> data dedup. option available on creating new volumes or:
+	Server Manager-> File and Storage Services-> Volumes /manually per volume
+
+

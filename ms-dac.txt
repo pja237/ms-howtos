@@ -1,0 +1,68 @@
+
+DAC
+===
+
+	@FS - add role:
+		File and Storage Services-> File and iSCSI Services-> File Server Resource Manager
+
+	@DC- add support for DAC claims via GPO
+		@Group Policy Management
+		EDIT: Domain Controllers->Default Domain Controllers Policy
+		Computer Configuration-> Policies-> Administrative Templates-> System-> KDC
+		EDIT: KDC support for claims, compound authentication and Kerberos armoring
+			- Enabled+Always provide claims
+		@CMD-Admin: gpupdate /force
+
+	@FS - DAC preparations
+	- CREATE CLAIM TYPES
+		@Active Directory Administrative Center
+		Dynamic Access Control->Claim Types->New
+		- select source attribute: e.g. department
+		- set for user+computer
+		- Nx set The following values are suggested->Add->value1..N (e.g. prodaja, uprava)
+	- ENABLE SUPPORT for: claim source attribute & Confidentialiy
+		Dynamic Access Control->Resource Properties
+			Department->Enable
+			Confidentialiy->Enable
+			Deprtment->Add Suggested Values: attribute_value_of_interest (e.g. uprava)
+
+	@FS - setting file confidentiality
+		@File server resource manager
+		Classification Management-> Classification Properties->Refresh
+		Classification Management-> Classification Rules-> Create Classification Rule
+			Name
+			Scope->Add->Folder
+			Classification->
+				Classification method: Content Classifier
+				Property: Confidentiality
+				Value: High
+				Parameters->Configure->set regexp for content classifier (word from file)
+			Evaluation Type->Re-evaluate existing property values->Overwrite the existing value
+		File Server Resource Manager->Run Classification With All Rules Now
+		[ File Server Resource Manager->Configure Classification Schedule ]
+
+	@FS - create DAC Central Access Rules
+		@Active Directory Administrative Center
+		Dynamic Access Control->Central Access Rules->New
+			Name
+			Target Resources-> Edit-> Add a condition
+			Use following permissions as current permissions-> Edit
+			Add principal->Authenticated users + Set Condition
+				(e.g. User-Odjel-Equals-Resource-Department)
+
+	@FS - create DAC Central Access Policies
+		@Active Directory Administrative Center
+		Dynamic Access Control->Central Access Policies->New
+			Add->created rules from step before
+
+	@DC- deploy @domain level
+		@Group Policy Management
+			New GPO->Edit
+			Computer Configuration-> Policies-> Windows Settings-> Security Settings-> File System
+			Manage Central Access Policies
+
+	@FS - deploy @FS level
+		@Windows Explorer->select folder->properties->security->advanced->central policy->change
+		Select policy & apply
+
+

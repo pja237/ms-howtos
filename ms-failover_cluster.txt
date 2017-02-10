@@ -1,0 +1,72 @@
+
+.1 DC --> .2 server1
+      |_> .3 server2
+
+- DC == iscsi target
+- server1/2 == iscsi initiator
+
+### @server1 & server2
+
+- server manager-> add roles and features 
+    File and Storage Services -> File and iSCSI Services -> File Server
+        Select feature -> Failover Clustering
+
+### @ server1
+
+Start -> Failover Cluster Manager
+    -> validate configuration
+        -> add Server1, add Server2
+    -> !!! DISABLE !!! "Create the cluster now using the validated nodes" option
+
+    -> Create Cluster
+        -> Name: cluster_name
+        -> address: new VIP .4
+
+When finished, new Computer object is created in the same OU as cluster nodes.
+
+
+### @ DC (comain controller) - needed on unupdated 2012 R2 servers
+
+Start -> Active Directory Users and Computers
+    -> Select OU -> Properties -> Secutiry -> Advanced
+        Advanced Security Settings for ou_name -> Add
+        Permission Entry for ou_name -> Select a principal
+        Select Users, Computer, Service Accour, or Group -> Object Types -> select: Computers
+        Select Users, Computer, Service Account, or Group -> Enter the object names to select -> cluster_name
+        enable: Create all child objects i Delete all child objects
+
+### @ server1
+
+Failover Cluster Manager
+    Storage -> Disks
+        Cluster Disk 2 -> Add to Cluster Shared Volumes.
+    Roles -> Configure Role
+        File server
+            -> Name: cluster_FS
+            -> Address: new VIP .5
+            ...
+            -> Select storage < available storage disk
+            -> Finish
+        cluster_FS -> Add File Share -> Select the profile for this share -> SMB Share – Quick
+            Specify share name: XXX
+        cluster_FS -> Properties -> Failover
+            +Allow failback 
+            +Immediately
+
+
+### @ server1 - Quorum settings
+
+Failover Cluster Manager
+    cluster_name -> More Actions -> Configure Cluster Quorum Settings -> Advanced quorum configuration
+        Select Voting Configuration
+        Select Quorum Witness -> Configure Storage Witness
+
+### @ DC - cluster update
+
+- server manager-> add roles and features 
+        Select feature -> Failover Clustering
+
+Start -> Cluster-Aware Updating
+    Connect to failover cluster -> cluster_name -> Connect
+    Preview updates for this cluster -> Generate Update Preview List
+    Apply updates to this cluster

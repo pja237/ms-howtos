@@ -1,0 +1,13 @@
+
+dnssec
+======
+
+1. sign zone
+
+2. deploy via GPO
+	Computer Configuration\Policies\Windows Settings\Name Resolution Policy
+	- Suffix
+	- Require DNS clients to check that name and address data has been validated by the DNS server 
+	- Create
+
+

@@ -1,0 +1,29 @@
+
+iscsi
+=====
+
+	@Initiator:
+	- get IQN
+	@Target:
+	- prepare disks
+		>diskpart
+		DISKPART> list disk
+		DISKPART> select disk=1
+		DISKPART> online disk
+		DISKPART> attributes disk clear readonly
+		DISKPART> convert dynamic
+		... repeat for other disks
+		DISKPART> create volume raid disk=1,2,3
+		DISKPART> list volume
+		DISKPART> format fs=ntfs quick label=RAID5
+		DISKPART> assign letter=e
+	- setup data storage
+	- server manager-> add roles and features
+		File and Storage Services-> File and iSCSI Services
+			role: iSCSI Target Server
+		feature: Multipath I/O
+	- server manager-> file and storage services->iscsi->new iscsi target
+	@Initiator:
+		iSCSI Initiator
+
+

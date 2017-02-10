@@ -1,0 +1,67 @@
+Branch Cache
+- hosted
+- distributed
+
+config:
+    - group policy + powershell
+
+1. group policy: enable BC @ ou|site
+2. powershell: configure & check status
+3. BC: enable on @ shared folder
+
+###
+GP 4 BC @SERVERDC (Main site)
+
+- local GP editor
+gpedit.msc
+    Computer Configuration-> Administrative Templates-> Network-> Lanman Server
+        Hash Publication for BranchCache -> Enable -> Allow hash publication only for shared
+        folders on which BranchCache is enabled
+
+    QoS
+        Computer Configuration -> Windows Settings -> Policy-based QoS -> Create new policy
+            -> Specify outbound throttle rate -> next->next->finish
+
+Run powershell as Admin: gpupdate /force
+
+Server Manager -> Add roles and Features
+    File and Storage Services -> File and iSCSI Services -> BranchCache for Network Files
+
+###
+BC @ Server1 (Branch)
+
+Server Manager -> Add roles and Features
+    File and Storage Services -> File and iSCSI Services -> BranchCache for Network Files
+        ? -> Add Features -> Remote Access ?
+        ? -> Select features -> BranchCache ?
+
+
+###
+Config @ ServerDC 
+
+Windows Explorer -> Select shared folder -> Properties
+    Sharing -> Advanced Sharing -> Caching -> Offline Settings -> Enable BranchCache
+
+###
+Config @ Server1
+
+Run powershell as Admin:
+    > Enable-BCHostedServer –RegisterSCP
+    > Get-BCStatus
+
+###
+GP @ ServerDC 
+
+Group Policy Management
+    Forest -> Domains -> Chosen OU -> Create a GPO in this domain, and Link it here -> Edit
+        Computer Configuration-> Policies-> Administrative Templates-> Network-> BranchCache
+            Turn on BranchCache -> Enabled
+            Enable Automatic Hosted Cache Discovery by Service Connection Point -> Enabled
+            Configure BranchCache for network files -> Enabled
+                Type the maximum round trip network latency (milliseconds) after which caching begins -> 0
+
+Run powershell as Admin: gpupdate /force
+
+### TEST @CLI
+
+netsh branchcache show status all

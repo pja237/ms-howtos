@@ -1,0 +1,35 @@
+Work folders
+============
+
+	@FS
+	- add role:
+		File and Storage Services-> File and iSCSI Services-> File Server Resource Manager-> Work Folders
+
+	- create self-signed cert for iis @powershell:
+	New-SelfSignedCertificate DnsName Serverdc.racunarstvo.edu CertStoreLocation Cert:Localmachine\My
+		!!! COPY THUMBPRINT TO NOTEPAD !!!
+
+	- export cert to file @powershell:
+	$cert= Get-Childitem Path cert:\LocalMachine\My\THUMBPRINT
+	Export-Certificate Cert $cert Filepath C:\Sharedc\Serverdc.p7b Type P7B
+
+	- deploy cert to clients using work folders via GPO
+	netsh http add sslcert ipport=0.0.0.0:443 certhash=THUMBPRINT appid={CE66697B-3AA0-49D1-BDBD-A25C8359FD5D} certstorename=MY
+	...or add binding & ssl cert via IIS management gui
+
+	@FS - configure work spaces
+	Server Manager->File and Storage Services-> Work Folders->New Sync Share
+
+
+	@AD - deploy via GPO
+	Group Policy Management
+		User Configuration-> Policies-> Administrative Templates-> Windows Components-> Work Folders
+		EDIT: Specify Work Folders settings
+			Enabled
+			Url: https://server.url
+			+Force automatic setup
+		Computer Configuration-> Policies-> Windows Settings-> Security Settings-> Public Key Policies
+		IMPORT: Trusted Root Certification Authorities
+			server.p7b
+
+

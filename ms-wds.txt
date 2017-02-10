@@ -1,0 +1,65 @@
+
+- winpe , windows preinstallation environment (u sklopu windows ADK)
+    - WIM img: winpe.wim
+    1. s oscdimg pretvoriti u ISO i s njim bootati racunalo
+    2. povezati winpe.wim s WDS-om i s njim bootati racunalo putem mreze
+- DISM - cmd line alat unutar winpe, radi konverziju particije diska u WIN file (part by part)
+
+- windows SIM (system image manager, dio ADK)
+    - generira XML koji sadrzi odgovore na install pitanja
+
+### priprema image-a windowsa za deployment
+- new install
+- sysprep (check all (OOBE)
+    - shutdown <- ako upalimo krece mini-setup faza koja generira nove SID-ove, zato winpe dolje!
+
+### @SERVERDC
+WDS server
+- add roles and features
+    * windows deployment services
+- start -> windows deployment services
+    L:Servers -> ServerDC -> Configure Server
+        - check both DHCP options
+        - Respond to all client computers (known and unknown)
+            + Require administrator approval for unknown computers
+    Manually start service
+        -> properties check respond and set PXE delay: 3s
+- Boot Images -> Add Boot Image -> winpe.wim (all default)
+
+--
+ALT CONFIG:
+powershell (as admin) -> wdsutil.exe
+
+### @CLI2
+pretvaranje sysprep-anog racunala u WIM img
+- pxe boot
+- net use M: \\SERVERDC\Deploy
+- m:
+- dism /capture-image /imagefile:M:\Win8.wim /capturedir:C:\ /Name:Win8
+
+### @SERVERDC
+- WDS konzola, disable winpe.wim boot image
+- Boot Images -> Add Boot Image -> C:\Deploy\boot.wim
+
+### @CLI1 priprema automatizacijske XML dat:
+- instalirati SIMx64.msi
+- Start -> Windows System Image Manager
+    - File-> Select Windows Image -> Win8.wim
+    - File-> New Answer File
+    - File-> Save Answer File As
+        - File name: \\SERVERDC\reminst\unattend
+
+### @SERVERDC
+- Install Images -> Add Install Image -> C:\Deploy\Win8.wim
+    - Create an image group named: Windows8
+
+### @CLI1 priprema automatizacijske XML dat:
+amd64_Microsoft-Windows-international-Core-WinPE_6.3.9600
+    -> SetupUILanguage
+        -> Add Setting to Pass 1 windowsPE
+
++ popuniti
+
+### @SERVERDC
+SERVERDC.racunarstvo.edu->Properties->Client->Enable unattended installation
+    x64 (UEFI) architecture -> Browse -> unattend.xml -> Open.

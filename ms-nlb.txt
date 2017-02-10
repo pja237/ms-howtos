@@ -1,0 +1,24 @@
+
+NLB
+===
+
+	Web Servers:
+	- add roles:
+		IIS -> feature: Network load balancing
+		[ add Security: windows authentication ]
+	- edit default site, change "Basic config" physical location
+	- edit default site, disable anonymous authentication, enable windows auth
+	- edit windows auth-> providers, move NTLM to 1st position on list
+	
+	NLBalancer:
+	- nlb manager:
+		New cluster
+		connect to host1 (node #1)->select lan interface
+		cluster ip configuration->add ip
+		cluster parameters-> set full internet name, change operation->multicast
+		port rules->remove current->add->:80, add->:443
+	- nlb manager:
+		Add host to cluster, repeat for host2 (node #2)
+
+
+
