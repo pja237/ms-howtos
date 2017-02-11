@@ -1,0 +1,30 @@
+DC --- S1 --- S2
+( d1.edu ) (d2.edu)
+
+1. configure DNS @dc & s2
+    @dc stub zone d2.edu pointing to s2
+    @s2 stub zone d1.edu pointing to dc
+
+2. configure trust relationship
+
+
+### 2. @DC
+Start -> Active Directory Domains and Trusts
+    d1.edu -> properties -> Trusts -> New Trust
+        > Trust name: d2.edu
+        > Trust type: Forest trust
+        > Direction of Trust: One-way; outgoing
+        > Sides of Trust: Both this domain and the specified domain
+        > Outgoing Trust Authentication Level--Local Forest: Selective authentication
+        > Confirm Outgoing Trust: Yes, confirm the outgoing trust
+# validate
+    d1.edu -> Properties -> Validate
+    (ADDS update sufix: NO!)
+
+### configure Selective authentication @DC
+Active Directory Users and Computers
+    View-> Advanced Features
+    Computers -> S1 -> Properties -> Security -> Add
+    Select Users, Computers, Service Accounts, or Groups -> Locations -> d2.edu
+    Enter username -> Check Names
+    Selected user -> Allowed to authenticate
