@@ -1,0 +1,7 @@
+- Group Policy Management - 
+	"Default domain policy" 
+	- Edit 
+	- Computer Configuration - Policies - Administrative Templates - Network - Network connections - Windows Firewall - Domain Profile - Windows Firewall: Protect all network connections = Disabled 
+
+	- Computer Configuration - Policies - Windows Settings - Security Settings - Windows Firewall with Advanced Security - Windows Firewall with Advanced Security 
+		- Private profile : off ; Public profile : off - close

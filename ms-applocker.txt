@@ -1,0 +1,16 @@
+
+- Group Policy Management console
+	-> New GPO -> Applocker
+	Computer Configuration-> Policies-> Windows Settings-> Security Settings-> Application Control Policies-> Applocker
+	Exectuable Rules -> Create New Rule
+		- Permissions: Deny
+		- Conditions: Publisher
+		- Open:  C:\Windows\System32\notepad.exe
+		Slider: File name
+
+For applocker to work, Application Identity service MUST be started:
+
+	-> New GPO -> Applocker_Service
+	Computer Configuration-> Policies-> Windows Settings-> Security Settings-> System Services	
+	Application Identity -> Properties ->  Define this policy setting -> Automatic
+

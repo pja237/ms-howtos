@@ -1,0 +1,6 @@
+@ server
+
+Computer Management console
+	- Shared Folders -> All Tasks -> Configure Shadow Copies...
+		- X: -> Enable
+	- Shared Folders -> X: -> Settings

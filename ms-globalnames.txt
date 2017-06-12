@@ -1,0 +1,16 @@
+
+- enable globalnames
+
+dnscmd <ServerName> /config /enableglobalnamessupport 1
+,or:
+Set-DnsServerGlobalNameZone
+
+e.g. enable @ localhost
+	dnscmd . /config /enableglobalnamessupport 1
+
+- For each server that you want to be able to provide single-label name resolution for, add an alias (CNAME) resource record to the GlobalNames zone.
+
+e.g.
+in GlobalNames -> New CNAME
+	a. Alias name: app1
+	b. Fully qualified domain name (FQDN) for target host box: app1.algebra.edu

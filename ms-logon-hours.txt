@@ -1,0 +1,3 @@
+@ Active Directory Users and Computers (dsa.msc)
+
+User -> Properties -> Account -> Logon Hours
